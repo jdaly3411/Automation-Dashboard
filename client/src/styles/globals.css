@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light Mode Defaults */
+  --bg-gradient-start: theme("colors.indigo.50");
+  --bg-gradient-end: theme("colors.purple.50");
+  --text-primary: theme("colors.gray.900");
+  --text-secondary: theme("colors.gray.600");
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --border-color: theme("colors.purple.200");
+}
+
+.dark {
+  /* Dark Mode Overrides */
+  --bg-gradient-start: theme("colors.gray.900");
+  --bg-gradient-end: theme("colors.gray.800");
+  --text-primary: theme("colors.gray.100");
+  --text-secondary: theme("colors.gray.400");
+  --card-bg: rgba(31, 41, 55, 0.7); /* bg-gray-800 with opacity */
+  --border-color: theme("colors.purple.700");
+}
+
+body {
+  @apply bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)] 
+         text-[var(--text-primary)] min-h-screen 
+         selection:bg-purple-200 selection:text-purple-900
+         transition-colors duration-300 ease-in-out;
+  font-family: var(--font-geist-sans), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Soft shadow and glassmorphism utilities */
+.glass-card {
+  @apply bg-[var(--card-bg)] backdrop-blur-lg rounded-2xl border border-[var(--border-color)] shadow-xl;
+}
+
+/* Smooth hover and transition effects */
+.hover-lift {
+  @apply transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Soft scrollbar */
+::-webkit-scrollbar {
+  @apply w-2 bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-purple-300/50 rounded-full;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+/* Noise background */
+.bg-noise {
+  background-image: url("/noise.svg");
+  opacity: 0.05;
+}
+#particles-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Ensure particles are in the background */
+}
