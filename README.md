@@ -23,3 +23,23 @@
 - **Mobile Optimization**:
   - Ensure the application is fully responsive on mobile devices.
 
+
+
+---
+## Setup Instructions
+### Backend (Server)
+1. Navigate to the 'server' directory:
+   ```cmd
+   cd server
+
+   python -m venv env
+   env\Scripts\activate
+   pip install -r requirements.txt
+
+   python manage.py runserver 0.0.0.0:8000
+### Front end (Client)
+1. Navigate to the 'client' directory
+   ```cmd
+   cd client
+   npm install
+   npm run dev
