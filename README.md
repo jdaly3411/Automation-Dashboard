@@ -62,3 +62,5 @@
    cd client
    npm install
    npm run dev
+5. Change Environment variable files
+   Change local ip's and MAC_ADDRESS to your own
