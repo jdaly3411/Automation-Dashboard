@@ -13,6 +13,13 @@
 - **Dynamic Device Monitoring**: Display real-time data from sensors and connected devices.
 - **Theming**: Dark and Light mode themes for user preference.
 
+
+---
+## Requirements
+- **Arduino**
+- **DHT11 Temperature and Humidity sensor**
+- **Arduino IDE**
+- 
   
 
 ### Features To Be Implemented
@@ -27,8 +34,11 @@
 
 ---
 ## Setup Instructions
-### Backend (Server)
-1. Navigate to the 'server' directory:
+### Arduino:
+1. Upload files
+   Upload the "sketch_dec9a.ino" file to your Arduino.
+### Backend (Server):
+2. Navigate to the 'server' directory:
    ```cmd
    cd server
 
@@ -37,8 +47,15 @@
    pip install -r requirements.txt
 
    python manage.py runserver 0.0.0.0:8000
+3. Activate your virtual environment and run serial_reader.py:
+   ```cmd
+   env\Scripts\activate
+
+   cd server\server\AutomationDashboard\AD
+   python serial_reader.py
+
 ### Front end (Client)
-1. Navigate to the 'client' directory
+4. Navigate to the 'client' directory
    ```cmd
    cd client
    npm install
