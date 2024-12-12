@@ -25,6 +25,8 @@
 ### Features To Be Implemented
 - **Home Automation Dashboard**:
   - Arduino Control
+  - Next/Back buttons
+  - Volume Control
 - **Authentication**:
   - Implement secure login/logout functionality for users.
 - **Mobile Optimization**:
