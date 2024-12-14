@@ -64,10 +64,6 @@
    cd client
    npm install
    npm run dev
-5. Environment Variables
-   Make a .env.local file in client root
-   On the first line enter your LOCAL IP:8000/api
-   E.G. - NEXT_PUBLIC_API_BASE_URL=http://192.168.4.22:8000/api/
-   Ensure you are using this variable name!
-
-   
+5. Change local values
+   - Go to the settings page on the website and change localip and mac address to your own
+   ![How do I get my local IP?](https://www.whatismybrowser.com/detect/what-is-my-local-ip-address/)
