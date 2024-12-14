@@ -31,6 +31,8 @@
   - Implement secure login/logout functionality for users.
 - **Mobile Optimization**:
   - Ensure the application is fully responsive on mobile devices.
+- **User inputs**:
+  - User inputs for Local IP and Mac address
 
 
 
