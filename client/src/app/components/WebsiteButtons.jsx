@@ -3,6 +3,9 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { RiNetflixFill } from "react-icons/ri";
 import { CgWebsite } from "react-icons/cg";
+import { FaYoutube } from "react-icons/fa";
+import { AiFillInstagram } from "react-icons/ai";
+import { IoIosMail } from "react-icons/io";
 
 const WebsiteButtons = () => {
   const [isLoading, setIsLoading] = useState({
@@ -30,16 +33,16 @@ const WebsiteButtons = () => {
     return;
   }
 
-  const executeCommand = async (endpoint, commandName) => {
+  const executeCommand = async (endpoint, commandName, websiteURL) => {
     try {
       setIsLoading((prev) => ({ ...prev, [commandName]: true }));
       const csrfToken = getCookie("csrftoken"); // Function to get CRSF token
       await axios.post(
         `http://${localIP}:8000/api/${endpoint}`,
-        {},
+        { websiteURL },
         {
           headers: {
-            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json", // Setting content type to json
           },
         }
       );
@@ -72,6 +75,31 @@ const WebsiteButtons = () => {
       endpoint: "open-website/",
       commandName: "openWebsite",
       color: "bg-blue-500 hover:bg-blue-600 text-white",
+      websiteURL: "https://www.netflix.com/browse",
+    },
+    {
+      icon: FaYoutube,
+      text: "Open Youtube",
+      endpoint: "open-website/",
+      commandName: "openWebsite",
+      color: "bg-blue-500 hover:bg-blue-600 text-white",
+      websiteURL: "https://www.youtube.com/",
+    },
+    {
+      icon: AiFillInstagram,
+      text: "Open Instagram",
+      endpoint: "open-website/",
+      commandName: "openWebsite",
+      color: "bg-blue-500 hover:bg-blue-600 text-white",
+      websiteURL: "https://www.instagram.com/",
+    },
+    {
+      icon: IoIosMail,
+      text: "Open Gmail",
+      endpoint: "open-website/",
+      commandName: "openWebsite",
+      color: "bg-blue-500 hover:bg-blue-600 text-white",
+      websiteURL: "https://mail.google.com/mail/u/0/#inbox",
     },
   ];
 
@@ -85,14 +113,20 @@ const WebsiteButtons = () => {
       <div className="flex items-center justify-center mb-6">
         <CgWebsite className="text-3xl text-purple-500 dark:text-purple-400 mr-3" />
         <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-white">
-          PC Controller
+          Website Shortcuts
         </h2>
       </div>
       <div className="grid grid-cols-4 gap-2">
         {Websites.map((button) => (
           <motion.button
             key={button.text}
-            onClick={() => executeCommand(button.endpoint, button.commandName)}
+            onClick={() =>
+              executeCommand(
+                button.endpoint,
+                button.commandName,
+                button.websiteURL
+              )
+            }
             disabled={isLoading[button.commandName]}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

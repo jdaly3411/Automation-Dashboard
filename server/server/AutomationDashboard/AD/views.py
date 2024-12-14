@@ -12,21 +12,14 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import serializers
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 import webbrowser
 from django.views.decorators.csrf import csrf_exempt
-
-
+import json
+import webbrowser
+from urllib.parse import urlparse
 
 
 
@@ -98,12 +91,32 @@ class ControlDeviceView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"error": "No command provided"}, status=status.HTTP_400_BAD_REQUEST)
     
+# @csrf_exempt
+# def OpenWebsite(request):
+#     if request.method == "POST":
+#         url = "https://www.netflix.com"
+#         webbrowser.open(url)
+#         return JsonResponse({"message": "Website opened successfully!"})
+#     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+
+
+
 @csrf_exempt
 def OpenWebsite(request):
     if request.method == "POST":
-        url = "https://www.netflix.com"
-        webbrowser.open(url)
-        return JsonResponse({"message": "Website opened successfully!"})
-    return JsonResponse({"error": "Invalid request method."}, status=400)
-
-
+        try:
+            data = json.loads(request.body)
+            website_url = data.get("websiteURL")
+            if not website_url:
+                return JsonResponse({"error": "No website URL provided"}, status=400)
+            
+            # Logic to open the website
+            import webbrowser
+            webbrowser.open(website_url)
+            
+            return JsonResponse({"message": f"Website {website_url} opened successfully!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
