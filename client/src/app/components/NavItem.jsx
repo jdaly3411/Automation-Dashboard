@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 
-const NavItem = ({ icon, label, active = false }) => (
+// Dashboard icon
+const NavItem = ({ icon, label, href = "/", active = false }) => (
   <motion.a
-    href="/"
+    href={href}
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all ${

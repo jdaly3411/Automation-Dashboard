@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FaPowerOff, FaPause, FaDesktop } from "react-icons/fa";
@@ -8,11 +8,31 @@ const PcController = () => {
     shutdown: false,
     pauseMedia: false,
   });
+  const [localIP, setLocalIP] = useState("");
+  const [macAddress, setMacAddress] = useState("");
+
+  // Load macaddress and LocalIP from local storage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedMacAddress = localStorage.getItem("macAddress");
+      const savedLocalIP = localStorage.getItem("localIP");
+
+      console.log("Saved macAddress:", savedMacAddress);
+      console.log("Saved localIP:", savedLocalIP);
+
+      if (savedMacAddress) setMacAddress(savedMacAddress);
+      if (savedLocalIP) setLocalIP(savedLocalIP);
+    }
+  }, []);
+  console.log("IP before validation", localIP);
+  if (!localIP || !/^(\d{1,3}\.){3}\d{1,3}$/.test(localIP)) {
+    return;
+  }
 
   const executeCommand = async (endpoint, commandName) => {
     try {
       setIsLoading((prev) => ({ ...prev, [commandName]: true }));
-      await axios.post(`http://127.0.0.1:8000/api/${endpoint}`);
+      await axios.post(`http://${localIP}:8000/api/${endpoint}`);
     } catch (error) {
       console.error(`Error executing ${commandName} command:`, error);
     } finally {

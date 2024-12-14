@@ -29,7 +29,11 @@ const Header = ({ toggleTheme, isDarkMode, extraButtons }) => {
           </motion.div>
           <nav className="hidden md:flex items-center space-x-4 ml-6">
             <NavItem icon={<AiOutlineHome />} label="Dashboard" active />
-            <NavItem icon={<AiOutlineSetting />} label="Settings" />
+            <NavItem
+              icon={<AiOutlineSetting />}
+              label="Settings"
+              href="/settings"
+            />
             <NavItem icon={<AiOutlineUser />} label="Profile" />
           </nav>
         </div>

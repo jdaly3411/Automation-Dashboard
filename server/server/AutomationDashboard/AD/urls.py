@@ -9,4 +9,7 @@ urlpatterns = [
     path('control-device/', ControlDeviceView.as_view(), name='control-device'),
     path('shutdown/', controller_views.shutdown, name='shutdown'),
     path('pause-media/', controller_views.pause_media, name='pause-media'),
+
+
+
 ]

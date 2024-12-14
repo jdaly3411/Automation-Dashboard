@@ -6,9 +6,12 @@ import os
 import win32api
 import win32con
 import time
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
 
 # Create your views here.
-MAC_ADDRESS = "A0-36-BC-2C-4E-54"
 
 @csrf_exempt
 def shutdown(request):

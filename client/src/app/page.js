@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { AiOutlineFilter } from "react-icons/ai";
@@ -10,6 +11,8 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SensorCard from "./components/SensorCard";
 import PcController from "./components/PcController";
+
+// API Base URL
 
 export default function Dashboard() {
   const [sensorData, setSensorData] = useState([]);
@@ -25,28 +28,68 @@ export default function Dashboard() {
     endTime: "",
   });
 
+  // State for storing macAddress and localIP
+  const [macAddress, setMacAddress] = useState("");
+  const [localIP, setLocalIP] = useState("");
+
+  const router = useRouter();
+
+  // Load macAddress and localIP from localStorage (client-side only)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedMacAddress = localStorage.getItem("macAddress");
+      const savedLocalIP = localStorage.getItem("localIP");
+
+      console.log("Saved macAddress:", savedMacAddress);
+      console.log("Saved localIP:", savedLocalIP);
+
+      if (savedMacAddress) setMacAddress(savedMacAddress);
+      if (savedLocalIP) setLocalIP(savedLocalIP);
+    }
+  }, []);
+
+  console.log("MAC Address:", macAddress);
+  console.log("Local IP:", localIP);
+
+  // Authentication and initial data fetch
+  useEffect(() => {
+    if ((localIP, macAddress)) {
+      fetchData();
+    }
+  }, [localIP, macAddress]);
+
+  // Theme toggle logic
   const toggleTheme = () => {
     const newTheme = isDarkMode ? "light" : "dark";
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark", !isDarkMode);
-    localStorage.setItem("theme", newTheme);
   };
 
+  // Theme initialization
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const theme = savedTheme || (prefersDarkMode ? "dark" : "light");
+    if (typeof window !== "undefined") {
+      const prefersDarkMode = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const theme = prefersDarkMode ? "dark" : "light";
 
-    setIsDarkMode(theme === "dark");
-    document.documentElement.classList.toggle("dark", theme === "dark");
+      setIsDarkMode(theme === "dark");
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    }
   }, []);
 
+  // Data fetching with error handling
   const fetchData = async (filters = {}) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      console.log("localIP value before validation:", localIP);
+
+      // Validate that localIP is a valid string before using it
+      if (!localIP || !/^(\d{1,3}\.){3}\d{1,3}$/.test(localIP)) {
+        return;
+      }
 
       // Clean up filters to exclude empty values
       const cleanFilters = Object.fromEntries(
@@ -56,33 +99,46 @@ export default function Dashboard() {
       );
 
       const queryParams = new URLSearchParams(cleanFilters);
-
-      // Dynamically determine the base URL
-      const BASE_URL =
-        process.env.NODE_ENV === "production"
-          ? "http://192.168.4.22:8000"
-          : "http://127.0.0.1:8000";
-
-      const url = `${BASE_URL}/api/sensor-data/?${queryParams.toString()}`;
+      const url = `http://${localIP}:8000/api/sensor-data/?${queryParams.toString()}`;
 
       // Send the GET request
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 10000, // 10-second timeout
+      });
+
+      // Validate response data
+      if (!Array.isArray(res.data)) {
+        throw new Error("Invalid data format received");
+      }
+
       setSensorData(res.data.slice(0, 9)); // Limit the displayed results
       setLastUpdated(new Date());
     } catch (err) {
-      setError("Failed to fetch sensor data");
+      const errorMessage = err.response
+        ? err.response.data?.message || "Failed to fetch sensor data"
+        : err.message || "Network error";
+
+      setError(errorMessage);
       console.error("Fetch error:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Data fetching effect
   useEffect(() => {
-    fetchData(cleanParams(filterParams));
-    const intervalId = setInterval(() => fetchData(filterParams), 60000);
-    return () => clearInterval(intervalId);
-  }, [filterParams]);
+    if (error === null) {
+      fetchData(cleanParams(filterParams));
+      const intervalId = setInterval(() => fetchData(filterParams), 60000);
+      return () => clearInterval(intervalId);
+    }
+  }, [filterParams, error]);
 
+  // Clean parameters utility function
   const cleanParams = (params) => {
     return Object.fromEntries(
       Object.entries(params).filter(
@@ -91,6 +147,7 @@ export default function Dashboard() {
     );
   };
 
+  // Filter handling methods
   const handleApplyFilter = (newFilterParams) => {
     setFilterParams(newFilterParams);
     setIsModalOpen(false);
@@ -176,7 +233,12 @@ export default function Dashboard() {
             </div>
           )}
 
-          {isLoading ? (
+          {/* Conditional rendering based on localIP */}
+          {!localIP ? (
+            <div className="text-center text-yellow-500 font-semibold mb-6">
+              Please enter local IP in settings
+            </div>
+          ) : isLoading ? (
             <div className="text-center text-gray-600 dark:text-gray-400 animate-pulse">
               Loading sensor data...
             </div>

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e7q9$6meyqsy870t&i3(nt6fa3a$d!0!l8*0dgtn$cyqfdy_d)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.4.22']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.4.22', '92.13.206.11']
 
 
 # Application definition
@@ -39,20 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'AD',
     'corsheaders',
-    'controller'
-]
+    'controller',
+    'rest_framework',
+    'rest_framework.authtoken',    'rest_framework_simplejwt.token_blacklist',
 
+
+]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # Disable CSRF middleware for now (for development only)
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
+]
 ROOT_URLCONF = 'AutomationDashboard.urls'
 
 TEMPLATES = [
@@ -84,6 +88,9 @@ DATABASES = {
     }
 }
 
+
+SITE_NAME = "Home automation"
+DOMAIN = '192.168.4.22:3000'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

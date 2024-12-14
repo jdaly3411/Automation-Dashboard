@@ -4,14 +4,33 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import SensorData
-from .serializer import SensorDataSerializer
+from .serializer import SensorDataSerializer, UserSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from datetime import datetime, time
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+
+
+
 
 class SensorDataView(APIView):
     permission_classes = [AllowAny]  # Allow all requests for testing
-    
+
+
     def post(self, request):
         """
         Create a new sensor data entry
@@ -74,3 +93,4 @@ class ControlDeviceView(APIView):
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"error": "No command provided"}, status=status.HTTP_400_BAD_REQUEST)
+    
