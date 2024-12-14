@@ -40,7 +40,7 @@
 ## Setup Instructions
 ### Arduino:
 1. Upload files
-   Upload the "sketch_dec9a.ino" file to your Arduino.
+   - Upload the "sketch_dec9a.ino" file to your Arduino.
 ### Backend (Server):
 2. Navigate to the 'server' directory:
    ```cmd
