@@ -62,5 +62,10 @@
    cd client
    npm install
    npm run dev
-5. Change Environment variable files
-   Change local ip's and MAC_ADDRESS to your own
+5. Environment Variables
+   Make a .env.local file in client root
+   On the first line enter your LOCAL IP:8000/api
+   E.G. - NEXT_PUBLIC_API_BASE_URL=http://192.168.4.22:8000/api/
+   Ensure you are using this variable name!
+
+   
