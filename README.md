@@ -57,6 +57,8 @@
 
    cd server\server\AutomationDashboard\AD
    python serial_reader.py
+4. Settings.py
+   - In the "AutomationDashboard" folder head to "settings.py" and change the "192.168.4.22" to your own local IP
 
 ### Front end (Client)
 4. Navigate to the 'client' directory
