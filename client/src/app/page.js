@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { AiOutlineFilter } from "react-icons/ai";
+import { AiOutlineFilter, AiOutlineReload } from "react-icons/ai";
+import { FiSettings } from "react-icons/fi";
 import AnimatedBackground from "./components/AnimatedBackgroud";
 import FilterModal from "./components/FilterModal";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SensorCard from "./components/SensorCard";
 import PcController from "./components/PcController";
-
-// API Base URL
+import WeatherWidget from "./components/WeatherWidget";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Dashboard() {
   const [sensorData, setSensorData] = useState([]);
@@ -27,150 +29,134 @@ export default function Dashboard() {
     startTime: "",
     endTime: "",
   });
-
-  // State for storing macAddress and localIP
   const [macAddress, setMacAddress] = useState("");
   const [localIP, setLocalIP] = useState("");
 
   const router = useRouter();
 
-  // Load macAddress and localIP from localStorage (client-side only)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedMacAddress = localStorage.getItem("macAddress");
       const savedLocalIP = localStorage.getItem("localIP");
-
-      console.log("Saved macAddress:", savedMacAddress);
-      console.log("Saved localIP:", savedLocalIP);
+      const savedTheme = localStorage.getItem("theme");
 
       if (savedMacAddress) setMacAddress(savedMacAddress);
       if (savedLocalIP) setLocalIP(savedLocalIP);
-    }
-  }, []);
 
-  console.log("MAC Address:", macAddress);
-  console.log("Local IP:", localIP);
-
-  // Authentication and initial data fetch
-  useEffect(() => {
-    if ((localIP, macAddress)) {
-      fetchData();
-    }
-  }, [localIP, macAddress]);
-
-  // Theme toggle logic
-  const toggleTheme = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark", !isDarkMode);
-  };
-
-  // Theme initialization
-  useEffect(() => {
-    if (typeof window !== "undefined") {
       const prefersDarkMode = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
-      const theme = prefersDarkMode ? "dark" : "light";
-
+      const theme = savedTheme || (prefersDarkMode ? "dark" : "light");
       setIsDarkMode(theme === "dark");
       document.documentElement.classList.toggle("dark", theme === "dark");
     }
   }, []);
 
-  // Data fetching with error handling
-  const fetchData = async (filters = {}) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      console.log("localIP value before validation:", localIP);
-
-      // Validate that localIP is a valid string before using it
-      if (!localIP || !/^(\d{1,3}\.){3}\d{1,3}$/.test(localIP)) {
-        return;
-      }
-
-      // Clean up filters to exclude empty values
-      const cleanFilters = Object.fromEntries(
-        Object.entries(filters).filter(
-          ([_, value]) => value != null && value !== ""
-        )
-      );
-
-      const queryParams = new URLSearchParams(cleanFilters);
-      const url = `http://${localIP}:8000/api/sensor-data/?${queryParams.toString()}`;
-
-      // Send the GET request
-      const res = await axios.get(url, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        timeout: 10000, // 10-second timeout
-      });
-
-      // Validate response data
-      if (!Array.isArray(res.data)) {
-        throw new Error("Invalid data format received");
-      }
-
-      setSensorData(res.data.slice(0, 9)); // Limit the displayed results
-      setLastUpdated(new Date());
-    } catch (err) {
-      const errorMessage = err.response
-        ? err.response.data?.message || "Failed to fetch sensor data"
-        : err.message || "Network error";
-
-      setError(errorMessage);
-      console.error("Fetch error:", err);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (localIP && macAddress) {
+      fetchData();
     }
-  };
+  }, [localIP, macAddress]);
 
-  // Data fetching effect
+  const toggleTheme = useCallback(() => {
+    const newTheme = isDarkMode ? "light" : "dark";
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark", !isDarkMode);
+    localStorage.setItem("theme", newTheme);
+  }, [isDarkMode]);
+
+  const fetchData = useCallback(
+    async (filters = {}) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        if (!localIP || !/^(\d{1,3}\.){3}\d{1,3}$/.test(localIP)) {
+          return;
+        }
+
+        const cleanFilters = Object.fromEntries(
+          Object.entries(filters).filter(
+            ([_, value]) => value != null && value !== ""
+          )
+        );
+
+        const queryParams = new URLSearchParams(cleanFilters);
+        const url = `http://${localIP}:8000/api/sensor-data/?${queryParams.toString()}`;
+
+        const res = await axios.get(url, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 10000,
+        });
+
+        if (!Array.isArray(res.data)) {
+          throw new Error("Invalid data format received");
+        }
+
+        setSensorData(res.data.slice(0, 9));
+        setLastUpdated(new Date());
+        toast.success("Data updated successfully");
+      } catch (err) {
+        const errorMessage = err.response
+          ? err.response.data?.message || "Failed to fetch sensor data"
+          : err.message || "Network error";
+
+        setError(errorMessage);
+        console.error("Fetch error:", err);
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [localIP]
+  );
+
   useEffect(() => {
     if (error === null) {
-      fetchData(cleanParams(filterParams));
+      fetchData(filterParams);
       const intervalId = setInterval(() => fetchData(filterParams), 60000);
       return () => clearInterval(intervalId);
     }
-  }, [filterParams, error]);
+  }, [fetchData, filterParams, error]);
 
-  // Clean parameters utility function
-  const cleanParams = (params) => {
-    return Object.fromEntries(
-      Object.entries(params).filter(
-        ([_, value]) => value != null && value !== ""
-      )
-    );
-  };
-
-  // Filter handling methods
-  const handleApplyFilter = (newFilterParams) => {
+  const handleApplyFilter = useCallback((newFilterParams) => {
     setFilterParams(newFilterParams);
     setIsModalOpen(false);
-  };
+  }, []);
 
-  const clearFilter = () => {
+  const clearFilter = useCallback(() => {
     setFilterParams({
       startDate: "",
       endDate: "",
       startTime: "",
       endTime: "",
     });
-  };
+    toast.info("Filters cleared");
+  }, []);
 
-  const openModal = (e) => {
+  const openModal = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsModalOpen(true);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <AnimatedBackground />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
 
       <Header
         toggleTheme={toggleTheme}
@@ -201,6 +187,24 @@ export default function Dashboard() {
                 Clear Filter
               </motion.button>
             )}
+            <motion.button
+              onClick={() => fetchData(filterParams)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-800/30 p-2 rounded-full transition-colors"
+              aria-label="Refresh data"
+            >
+              <AiOutlineReload className="text-2xl" />
+            </motion.button>
+            <motion.button
+              onClick={() => router.push("/settings")}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800/30 p-2 rounded-full transition-colors"
+              aria-label="Go to settings"
+            >
+              <FiSettings className="text-2xl" />
+            </motion.button>
           </>
         }
       />
@@ -222,10 +226,12 @@ export default function Dashboard() {
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl font-extrabold text-center mb-10 text-gray-800 dark:text-gray-100 filter drop-shadow-lg"
+            className="text-5xl font-extrabold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400"
           >
             Home Automation Dashboard
           </motion.h1>
+
+          <WeatherWidget />
 
           {lastUpdated && (
             <div className="text-center text-gray-600 dark:text-gray-400 mb-6">
@@ -233,20 +239,40 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Conditional rendering based on localIP */}
           {!localIP ? (
-            <div className="text-center text-yellow-500 font-semibold mb-6">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-yellow-500 font-semibold mb-6 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg shadow-md"
+            >
               Please enter local IP in settings
-            </div>
+            </motion.div>
           ) : isLoading ? (
-            <div className="text-center text-gray-600 dark:text-gray-400 animate-pulse">
-              Loading sensor data...
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center text-gray-600 dark:text-gray-400 animate-pulse"
+            >
+              <div className="inline-block p-4 bg-blue-100 dark:bg-blue-900 rounded-lg shadow-md">
+                Loading sensor data...
+              </div>
+            </motion.div>
           ) : error ? (
-            <div className="text-center text-red-500">{error}</div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center text-red-500 p-4 bg-red-100 dark:bg-red-900 rounded-lg shadow-md"
+            >
+              {error}
+            </motion.div>
           ) : (
             <AnimatePresence>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
                 {sensorData.map((data, index) => (
                   <SensorCard
                     key={index}
@@ -256,19 +282,19 @@ export default function Dashboard() {
                     index={index}
                   />
                 ))}
-              </div>
+              </motion.div>
             </AnimatePresence>
           )}
 
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-extrabold text-center my-16 text-gray-800 dark:text-gray-100 filter drop-shadow-lg"
+            className="text-4xl font-extrabold text-center my-16 text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400"
           >
             Commands
           </motion.h2>
 
-          <PcController />
+          <PcController localIP={localIP} />
         </div>
       </main>
       <Footer />

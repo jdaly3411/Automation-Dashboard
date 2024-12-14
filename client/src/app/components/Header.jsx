@@ -29,12 +29,6 @@ const Header = ({ toggleTheme, isDarkMode, extraButtons }) => {
           </motion.div>
           <nav className="hidden md:flex items-center space-x-4 ml-6">
             <NavItem icon={<AiOutlineHome />} label="Dashboard" active />
-            <NavItem
-              icon={<AiOutlineSetting />}
-              label="Settings"
-              href="/settings"
-            />
-            <NavItem icon={<AiOutlineUser />} label="Profile" />
           </nav>
         </div>
         <div className="flex items-center space-x-4">
@@ -49,14 +43,6 @@ const Header = ({ toggleTheme, isDarkMode, extraButtons }) => {
             ) : (
               <MoonIcon className="w-5 h-5" />
             )}
-          </motion.button>
-          <motion.button
-            onClick={handleReload}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded-full transition-colors"
-          >
-            <AiOutlineReload className="w-5 h-5" />
           </motion.button>
 
           {extraButtons}
