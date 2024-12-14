@@ -13,8 +13,11 @@ import Header from "./components/Header";
 import SensorCard from "./components/SensorCard";
 import PcController from "./components/PcController";
 import WeatherWidget from "./components/WeatherWidget";
+import DataVisualization from "./components/DataVisualization";
+// import QuickActions from "./components/QuickActions";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WebsiteButtons from "./components/WebsiteButtons";
 
 export default function Dashboard() {
   const [sensorData, setSensorData] = useState([]);
@@ -231,7 +234,10 @@ export default function Dashboard() {
             Home Automation Dashboard
           </motion.h1>
 
-          <WeatherWidget />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <WeatherWidget />
+            {/* <QuickActions localIP={localIP} /> */}
+          </div>
 
           {lastUpdated && (
             <div className="text-center text-gray-600 dark:text-gray-400 mb-6">
@@ -286,6 +292,8 @@ export default function Dashboard() {
             </AnimatePresence>
           )}
 
+          <DataVisualization data={sensorData} />
+
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -295,6 +303,7 @@ export default function Dashboard() {
           </motion.h2>
 
           <PcController localIP={localIP} />
+          <WebsiteButtons localIP={localIP} />
         </div>
       </main>
       <Footer />

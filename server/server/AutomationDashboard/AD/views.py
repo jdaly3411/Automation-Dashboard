@@ -11,7 +11,7 @@ from datetime import datetime, time
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -23,6 +23,10 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+import webbrowser
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 
 
@@ -94,3 +98,12 @@ class ControlDeviceView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"error": "No command provided"}, status=status.HTTP_400_BAD_REQUEST)
     
+@csrf_exempt
+def OpenWebsite(request):
+    if request.method == "POST":
+        url = "https://www.netflix.com"
+        webbrowser.open(url)
+        return JsonResponse({"message": "Website opened successfully!"})
+    return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
