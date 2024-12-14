@@ -12,6 +12,7 @@
 - **Remote PC control**: Backend routes enable the user to remotely control actions on the computer from the website
 - **Dynamic Device Monitoring**: Display real-time data from sensors and connected devices.
 - **Theming**: Dark and Light mode themes for user preference.
+- **User inputs**: User can enter their local IP and MAC ADDRESS to be used in requests
 
 
 ---
@@ -19,7 +20,6 @@
 - **Arduino**
 - **DHT11 Temperature and Humidity sensor**
 - **Arduino IDE**
-- 
   
 
 ### Features To Be Implemented
