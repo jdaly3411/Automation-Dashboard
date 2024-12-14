@@ -13,22 +13,36 @@
 - **Dynamic Device Monitoring**: Display real-time data from sensors and connected devices.
 - **Theming**: Dark and Light mode themes for user preference.
 
+
+---
+## Requirements
+- **Arduino**
+- **DHT11 Temperature and Humidity sensor**
+- **Arduino IDE**
+- 
   
 
 ### Features To Be Implemented
 - **Home Automation Dashboard**:
   - Arduino Control
+  - Next/Back buttons
+  - Volume Control
 - **Authentication**:
   - Implement secure login/logout functionality for users.
 - **Mobile Optimization**:
   - Ensure the application is fully responsive on mobile devices.
+- **User inputs**:
+  - User inputs for Local IP and Mac address
 
 
 
 ---
 ## Setup Instructions
-### Backend (Server)
-1. Navigate to the 'server' directory:
+### Arduino:
+1. Upload files
+   Upload the "sketch_dec9a.ino" file to your Arduino.
+### Backend (Server):
+2. Navigate to the 'server' directory:
    ```cmd
    cd server
 
@@ -37,9 +51,23 @@
    pip install -r requirements.txt
 
    python manage.py runserver 0.0.0.0:8000
+3. Activate your virtual environment and run serial_reader.py:
+   ```cmd
+   env\Scripts\activate
+
+   cd server\server\AutomationDashboard\AD
+   python serial_reader.py
+
 ### Front end (Client)
-1. Navigate to the 'client' directory
+4. Navigate to the 'client' directory
    ```cmd
    cd client
    npm install
    npm run dev
+5. Environment Variables
+   Make a .env.local file in client root
+   On the first line enter your LOCAL IP:8000/api
+   E.G. - NEXT_PUBLIC_API_BASE_URL=http://192.168.4.22:8000/api/
+   Ensure you are using this variable name!
+
+   
