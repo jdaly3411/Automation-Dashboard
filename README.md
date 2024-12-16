@@ -35,6 +35,7 @@
 - **🔌 Arduino**
 - **🌡️ DHT11 Temperature and Humidity Sensor**
 - **📟 Arduino IDE**
+- **🐍 Python version 3+**
 
 ---
 
