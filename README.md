@@ -14,6 +14,7 @@
 - **📊 Dynamic Device Monitoring**: Display real-time data from sensors and connected devices.
 - **🌓 Theming**: Dark and Light mode themes for user preference.
 - **📝 User Inputs**: User can enter their local IP and MAC ADDRESS to be used in requests.
+- **📱 Mobile Support**: Users can enter their local ip along with the port on their mobile device, or any device on their local network and visit the website and use commands!
 
 ---
 
