@@ -1,4 +1,4 @@
-# 🎛️ Home-Automation-Dashboard
+# 🏠 Home-Automation-Dashboard
 
 ---
 
