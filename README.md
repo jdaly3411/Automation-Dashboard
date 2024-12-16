@@ -47,4 +47,34 @@
 ### 💻 Backend (Server):
 2. **Navigate to the 'server' directory**:
    ```bash
-   cd server
+   python -m venv env
+   env\Scripts\activate
+   pip install -r requirements.txt
+   cd server\server\AutomationDashboard
+
+   python manage.py runserver 0.0.0.0:8000
+3. Activate your virtual environment and run `serial_reader.py`
+   ```bash
+   env\Scripts\activate
+   cd server\server\AutomationDashboard\AD
+   python serial_reader.py
+4. Update `settings.py`
+   in the `"AutomationDashboard"` folder, navigate to `"settings.py"` and replace "192.168.4.22" with your local IP.
+### 🌐 Frontend (Client):
+5. Navigate to the client directory:
+   ```bash
+   cd client
+   npm install
+   npm run dev
+6. Update Local Values:
+- Go to the settings page on the website and change localip and mac address to your own
+  👉 ![How do I get my local IP?](https://www.whatismybrowser.com/detect/what-is-my-local-ip-address/)
+
+  
+
+--- 
+🖼️ Preview
+
+![image](https://github.com/user-attachments/assets/adfe9ea0-169a-42cf-b85f-a6b8f9d37fac)
+![image](https://github.com/user-attachments/assets/b49fa16f-504c-42e6-bd4f-4413d48af27b)
+
