@@ -90,17 +90,6 @@ class ControlDeviceView(APIView):
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"error": "No command provided"}, status=status.HTTP_400_BAD_REQUEST)
-    
-# @csrf_exempt
-# def OpenWebsite(request):
-#     if request.method == "POST":
-#         url = "https://www.netflix.com"
-#         webbrowser.open(url)
-#         return JsonResponse({"message": "Website opened successfully!"})
-#     return JsonResponse({"error": "Invalid request method."}, status=400)
-
-
-
 
 
 @csrf_exempt

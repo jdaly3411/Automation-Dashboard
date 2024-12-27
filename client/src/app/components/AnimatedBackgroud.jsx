@@ -24,7 +24,7 @@ const AnimatedBackground = () => {
         this.size = Math.random() * 2 + 1;
         this.speedX = (Math.random() - 0.5) * 0.5;
         this.speedY = (Math.random() - 0.5) * 0.5;
-        this.color = `rgba(52, 152, 219, ${Math.random() * 0.5 + 0.1})`; // Soft blue with varying opacity
+        this.color = `rgba(52, 255, 219, ${Math.random() * 0.5 + 0.1})`; // Soft blue with varying opacity
       }
 
       update() {
@@ -45,7 +45,7 @@ const AnimatedBackground = () => {
       }
     }
 
-    const particles = Array.from({ length: 50 }, () => new Particle());
+    const particles = Array.from({ length: 300 }, () => new Particle());
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -74,7 +74,7 @@ const AnimatedBackground = () => {
         transition={{
           repeat: Infinity,
           repeatType: "reverse",
-          duration: 20,
+          duration: 5,
         }}
       />
       <canvas
